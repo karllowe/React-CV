@@ -1,0 +1,22 @@
+.addEducation {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    margin: 12px 12px;
+}
+
+.addEducation form{
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.addEducation .educationCol {
+    display: flex;
+    flex-direction: column;
+}
+
+.educationCol:nth-child(-n +2) {
+    flex: 2 1 auto
+}

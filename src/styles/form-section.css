@@ -1,0 +1,22 @@
+:root{
+    color: black;
+}
+
+
+.formSection {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    background-color: lightgray;
+    padding: 12px 24px;
+    margin: none;
+}
+
+h2 {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+}
+
+input {
+    background-color: white;
+}

@@ -2,8 +2,6 @@ import { useState } from 'react';
 import '/src/styles/form-section.css';
 import '/src/styles/education.css';
 
-const educationArray = [];
-
 class Degree {
     constructor(subject, institution, startDate, endDate=null) {
         this.subject = subject;
@@ -14,26 +12,31 @@ class Degree {
 }
 
 function EducationSection() {
+    const [educationArray, setEducationArray] = useState([]);
+
+    const addNewEducation = (subject, institution, startDate, endDate) => {
+        const item = new Degree(subject, institution, startDate, endDate)
+        setEducationArray(prev => [...prev, item]);
+    };
+
     return (
         <div className="formSection">
             <form action="">
                 <h2>Education</h2>
             </form>
-            <AddEducation />
+            <AddEducation addNewEducation={addNewEducation}/>
+            <ShowEducation educationArray={educationArray}/>
         </div>
     )
 }
 
-function AddEducation () {
+function AddEducation ({addNewEducation}) {
     const [subject, setSubject] = useState("");
     const [institution, setInstitution] = useState("");
     const [start, setStart] = useState("");
     const [end, setEnd] = useState("");
 
-    const addNewEducation = () => {
-        const item = new Degree(subject, institution, start, end)
-        educationArray.push(item);
-    };
+
 
     const resetForm = () => {
         setSubject("");
@@ -88,9 +91,8 @@ function AddEducation () {
                 <button 
                     onClick={((e) => {
                         e.preventDefault();
-                        addNewEducation();
+                        addNewEducation(subject, institution, start, end);
                         resetForm();
-                        console.log(educationArray)
                     })}
                 >
                     Save
@@ -101,5 +103,16 @@ function AddEducation () {
     )
 }
 
+function ShowEducation ({educationArray}) {
+    return (
+        <ul>
+            {educationArray.map((item, index) => (
+                <li key={index}>
+                    {item.subject}
+                </li>
+            ))}
+        </ul>
+    )
+}
 
-export {EducationSection}
+export {EducationSection, ShowEducation}

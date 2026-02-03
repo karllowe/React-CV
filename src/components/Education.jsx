@@ -115,4 +115,4 @@ function ShowEducation ({educationArray}) {
     )
 }
 
-export {EducationSection, ShowEducation}
+export {EducationSection}

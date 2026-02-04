@@ -34,6 +34,11 @@ function EducationSection() {
         educationArray.splice(index,1,updatedEducation)
   };
 
+  const deleteEducation = (deleteId) => {
+    const index = educationArray.findIndex((item) => item.id == deleteId);
+    educationArray.splice(index, 1)
+  };
+
   const setFormContents = (selectedEducation) => {
     setSelectedEducation(selectedEducation)
   };
@@ -55,14 +60,14 @@ function EducationSection() {
             >Add</button>
         </div>
       </form>
-      {showNewModal && (<AddEducation addNewEducation={addNewEducation} showNewModal={showNewModal} setShowNewModal={setShowNewModal} selectedEducation={selectedEducation} updateEducation={updateEducation}/>)}
+      {showNewModal && (<AddEducation addNewEducation={addNewEducation} showNewModal={showNewModal} setShowNewModal={setShowNewModal} selectedEducation={selectedEducation} updateEducation={updateEducation} deleteEducation={deleteEducation}/>)}
       <ShowEducation educationArray={educationArray} selectedEducation={selectedEducation} setFormContents={setFormContents} setShowNewModal={setShowNewModal} tempArray={tempArray} />
     </div>
   );
 }
 
 // dialog modal sub-component
-function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selectedEducation, updateEducation}) {
+function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selectedEducation, updateEducation, deleteEducation}) {
     const dialogRef = useRef(null);
     const formRef = useRef(null);
 
@@ -177,7 +182,18 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
                     setShowNewModal(false)
                 }}
             >
-            Save
+                Save
+            </button>
+            <button
+                hidden={mode=="new"}
+                onClick={(e) => {
+                    e.preventDefault();
+                    deleteEducation(id);
+                    resetForm();
+                    setShowNewModal(false)
+                }}
+            >
+                Delete
             </button>
         </form>
         </dialog>

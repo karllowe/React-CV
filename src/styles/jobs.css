@@ -43,11 +43,21 @@
 
 .jobListItem {
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: start;
+}
+.jobHeaderRow {
+    display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
 }
 
 .jobDate {
     margin-left: auto;
+}
+
+h4, p {
+    margin: 0 0 0 0;
+    padding: none;
 }

@@ -220,17 +220,21 @@ function ShowJobs({jobsArray, setJobsModal, setFormContents}) {
             jobsArray.map((item) => (
                 <li key={item.id}>
                     <div className="jobListItem">
-                        <div>{item.title} - {item.company}</div>
-                        <div className="jobDate">({format(item.startDate, 'MMM-yyyy')}-{item.endDate ? format(item.endDate, 'MMM-yyyy') : "current"}) </div>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setFormContents(item);
-                                setJobsModal(true)
-                            }}
-                        >
-                            Edit
-                        </button>
+                        <div className="jobHeaderRow">
+                            <div>{item.title} - {item.company}</div>
+                            <div className="jobDate">({format(item.startDate, 'MMM-yyyy')}-{item.endDate ? format(item.endDate, 'MMM-yyyy') : "current"}) </div>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setFormContents(item);
+                                    setJobsModal(true)
+                                }}
+                            >
+                                Edit
+                            </button>
+                        </div>
+                        <h4>Key responsibilities:</h4>
+                        <p>{item.responsibilities}</p>
                     </div>
                 </li>
             ))

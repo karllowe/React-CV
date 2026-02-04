@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import "/src/styles/form-section.css";
 import "/src/styles/jobs.css";
-// import {format} from "date-fns";
+import {format} from "date-fns";
+import {sortDates} from "/src/components/Help_functions.jsx"
 
 class Job {
     constructor(title, company, startDate, endDate, responsibilities) {
@@ -15,8 +16,16 @@ class Job {
 }
 
 function JobsSection() {
-    const [jobsArray] = useState([]);
+    const [jobsArray, setJobsArray] = useState([]);
     const [showJobsModal, setJobsModal] = useState(false);
+   
+    const addNewJob = (title, company, startDate, endDate=null, responsibilities="") => {
+        const newJob = new Job(title, company, startDate, endDate, responsibilities);
+        setJobsArray((prev) => [...prev, newJob])
+    }
+
+    const tempJobsArray = jobsArray;
+    tempJobsArray.sort((a, b) => sortDates(a.endDate, b.endDate));
 
     return (
         <div className="formSection">
@@ -31,12 +40,13 @@ function JobsSection() {
                     Add
                 </button>
             </div>
-            <AddJob jobsArray={jobsArray} setJobsModal={setJobsModal} showJobsModal={showJobsModal}/>
+            <AddJob jobsArray={jobsArray} setJobsModal={setJobsModal} showJobsModal={showJobsModal} addNewJobs={addNewJob}/>
+            <ShowJobs jobsArray={tempJobsArray}/>
         </div>
     )
 }
 
-function AddJob({showJobsModal, setJobsModal}) {
+function AddJob({showJobsModal, setJobsModal, addNewJobs}) {
     const dialogRef = useRef(null);
     const formRef = useRef(null);
 
@@ -45,6 +55,8 @@ function AddJob({showJobsModal, setJobsModal}) {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [responsibilities, setResponsibilities] = useState("");
+
+    const [isValid, setIsValid] = useState(false);
 
 
     useEffect(() => {
@@ -58,6 +70,14 @@ function AddJob({showJobsModal, setJobsModal}) {
         }
     }, [showJobsModal]);
 
+    useEffect((isValid)=> {
+        if (!formRef.current) return;
+        if(!isValid) {
+            setIsValid(formRef.current.checkValidity())
+        }
+    }, [title, company, startDate]);
+
+
     const resetForm = () => {
         setTitle("");
         setCompany("");
@@ -65,8 +85,6 @@ function AddJob({showJobsModal, setJobsModal}) {
         setEndDate("");
         setResponsibilities("")
     };
-
-    // add const function for creating new project
 
     return (
         <dialog
@@ -77,13 +95,16 @@ function AddJob({showJobsModal, setJobsModal}) {
             <div className="header">
                 <h2>Add new job</h2>
                 <button 
-                    type="submit">
+                    type="submit"
+                    className="submitButton"
+                    disabled={!isValid}
                     onClick={(e) => {
                         e.preventDefault();
-                        resetForm
-                        // add what to do to save the record
-                    }}
-
+                        addNewJobs(title, company, startDate, endDate, responsibilities);
+                        resetForm();
+                        setJobsModal(false)
+                    }}>
+                    Add new
                 </button>
                 <button type="button" onClick={() => setJobsModal(false)}>Close</button>
             </div>
@@ -146,18 +167,24 @@ function AddJob({showJobsModal, setJobsModal}) {
     )
 }
 
-// function ShowJobs(jobsArray) {
-//     return (
-//         <ul>
-//         {
-//             jobsArray.map((item) => {
-//                 <li key={item.id}>
-//                     {item.title} - {item.company}
-//                 </li>
-//             })
-//         }
-//         </ul>
-//     )
-// }
+function ShowJobs({jobsArray}) {
+    return (
+        <>
+        <p>{jobsArray.length <1 ? "No jobs added" : ""}</p>
+        <ul>
+        {
+            jobsArray.map((item) => (
+                <li key={item.id}>
+                    <div className="jobListItem">
+                        <div>{item.title} - {item.company}</div>
+                        <div className="jobDate">({format(item.startDate, 'MMM-yyyy')}-{item.endDate ? format(item.endDate, 'MMM-yyyy') : "current"}) </div>
+                    </div>
+                </li>
+            ))
+        }
+        </ul>
+        </>
+    )
+}
 
 export {JobsSection}

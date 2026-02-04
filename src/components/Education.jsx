@@ -122,6 +122,7 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
                 name="school"
                 value={institution}
                 onChange={(e) => setInstitution(e.target.value)}
+                required
             />
             </div>
             <div className="educationCol">
@@ -132,6 +133,7 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
                 name="start"
                 value={start}
                 onChange={(e) => setStart(e.target.value)}
+                required
             />
             </div>
             <div className="educationCol">
@@ -142,6 +144,7 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
                 name="end"
                 value={end}
                 onChange={(e) => setEnd(e.target.value)}
+                required                
             />
             </div>
             <button

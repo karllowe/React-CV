@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import "/src/styles/form-section.css";
 import "/src/styles/education.css";
 import {format} from "date-fns";
+import {sortDates} from "/src/components/Help_functions.jsx"
 
 // Defines the education section component
 // uses a parent component for the whole section, then sub-components 
@@ -44,7 +45,7 @@ function EducationSection() {
   };
 
     const tempArray = educationArray;
-    tempArray.sort((a,b) => {return new Date(b.endDate) - new Date(a.endDate)});
+    tempArray.sort((a,b) => sortDates(b.endDate, a.endDate));
 
   return (
     <div className="formSection">

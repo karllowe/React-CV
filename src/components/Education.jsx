@@ -204,6 +204,10 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
 
 function ShowEducation({ tempArray, setFormContents, setShowNewModal }) {
   return (
+    <>
+    <p>
+    {tempArray.length <1 ? "No education added" : ""}
+    </p>
     <ul>
       {    
       tempArray.map((item) => (
@@ -222,6 +226,7 @@ function ShowEducation({ tempArray, setFormContents, setShowNewModal }) {
         </li>
       ))}
     </ul>
+    </>
   );
 }
 

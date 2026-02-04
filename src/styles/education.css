@@ -3,9 +3,6 @@
     justify-content: space-between;
 }
 
-
-
-
 .addEducation[open] {
     display: flex;
     flex-direction: column;
@@ -39,4 +36,10 @@
 
 .addEducation button {
     width: 100px;
+}
+
+.educationListItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

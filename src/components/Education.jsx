@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import "/src/styles/form-section.css";
 import "/src/styles/education.css";
+import {format} from "date-fns";
 
 // Defines the education section component
 // uses a parent component for the whole section, then sub-components 
@@ -37,6 +38,9 @@ function EducationSection() {
     setSelectedEducation(selectedEducation)
   };
 
+    const tempArray = educationArray;
+    tempArray.sort((a,b) => {return new Date(b.endDate) - new Date(a.endDate)});
+
   return (
     <div className="formSection">
       <form action="">
@@ -52,21 +56,22 @@ function EducationSection() {
         </div>
       </form>
       {showNewModal && (<AddEducation addNewEducation={addNewEducation} showNewModal={showNewModal} setShowNewModal={setShowNewModal} selectedEducation={selectedEducation} updateEducation={updateEducation}/>)}
-      <ShowEducation educationArray={educationArray} selectedEducation={selectedEducation} setFormContents={setFormContents} setShowNewModal={setShowNewModal} />
+      <ShowEducation educationArray={educationArray} selectedEducation={selectedEducation} setFormContents={setFormContents} setShowNewModal={setShowNewModal} tempArray={tempArray} />
     </div>
   );
 }
 
 // dialog modal sub-component
-function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selectedEducation, updateEducation }) {
+function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selectedEducation, updateEducation}) {
     const dialogRef = useRef(null);
-
+    const formRef = useRef(null);
 
     const [subject, setSubject] = useState(selectedEducation ? selectedEducation.subject : "");
     const [institution, setInstitution] = useState(selectedEducation ? selectedEducation.institution : "");
     const [start, setStart] = useState(selectedEducation ? selectedEducation.startDate : "");
     const [end, setEnd] = useState(selectedEducation ? selectedEducation.endDate : "");
     const [id] = useState(selectedEducation ? selectedEducation.id : "");
+    const [isValid, setIsValid] = useState(false);
 
     let mode = "";
     if (selectedEducation) {
@@ -86,6 +91,15 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
         }
     }, [showNewModal]);
 
+    useEffect((isValid) => {
+        if (!formRef.current) return;
+
+        if(!isValid) {
+            setIsValid(formRef.current.checkValidity())
+        }
+    }, [subject, institution, start, end]);
+
+
     const resetForm = () => {
         setSubject("");
         setInstitution("");
@@ -103,7 +117,7 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
             <h2>Edit</h2>
             <button type="button" onClick={()=> setShowNewModal(false)}>Close</button>
         </div>
-        <form action="">
+        <form action="" ref={formRef}>
             <div className="educationCol">
             <label htmlFor="subject">Subject:</label>
             <input
@@ -112,6 +126,7 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
                 name="subject"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
+                required
             />
             </div>
             <div className="educationCol">
@@ -142,22 +157,25 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
                 type="date"
                 id="end"
                 name="end"
+                max={new Date().toISOString().split("T")[0]}
                 value={end}
                 onChange={(e) => setEnd(e.target.value)}
                 required                
             />
             </div>
             <button
-            onClick={(e) => {
-                e.preventDefault();
-                if (mode=="edit") {
-                    updateEducation(subject, institution, start, end, id)
-                } else {
-                    addNewEducation(subject, institution, start, end);
-                }
-                resetForm();
-                setShowNewModal(false)
-            }}
+                type="submit"
+                disabled={!isValid}
+                onClick={(e) => {
+                    e.preventDefault();
+                    if (mode=="edit") {
+                        updateEducation(subject, institution, start, end, id)
+                    } else {
+                        addNewEducation(subject, institution, start, end);
+                    }
+                    resetForm();
+                    setShowNewModal(false)
+                }}
             >
             Save
             </button>
@@ -166,13 +184,17 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
     );
 }
 
-function ShowEducation({ educationArray, setFormContents, setShowNewModal }) {
+
+
+function ShowEducation({ tempArray, setFormContents, setShowNewModal }) {
   return (
     <ul>
-      {educationArray.map((item) => (
+      {    
+      tempArray.map((item) => (
         <li key={item.id}>
             <div className="educationListItem">
-                {item.subject} - {item.institution} ({item.startDate}-{item.endDate}) 
+                <div>{item.subject} - {item.institution}</div>
+                <div className="educationDate">({format(item.startDate, 'MMM-yyyy')}-{format(item.endDate, 'MMM-yyyy')}) </div>
                 <button
                     type="button"
                     onClick={() => {

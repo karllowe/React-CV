@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "/src/styles/form-section.css";
 import "/src/styles/education.css";
 
@@ -14,6 +14,7 @@ class Degree {
 
 function EducationSection() {
   const [educationArray, setEducationArray] = useState([]);
+  const [showNewModal, setShowNewModal] = useState(false);
 
   const addNewEducation = (subject, institution, startDate, endDate) => {
     const item = new Degree(subject, institution, startDate, endDate);
@@ -23,19 +24,38 @@ function EducationSection() {
   return (
     <div className="formSection">
       <form action="">
-        <h2>Education</h2>
+        <div className="educationHeader">
+            <h2>Education</h2>
+            <button 
+                type="button"
+                onClick={() => setShowNewModal((v) => !v)}
+            >Add</button>
+        </div>
       </form>
-      <AddEducation addNewEducation={addNewEducation} />
+      <AddEducation addNewEducation={addNewEducation} showNewModal={showNewModal} setShowNewModal={setShowNewModal} />
       <ShowEducation educationArray={educationArray} />
     </div>
   );
 }
 
-function AddEducation({ addNewEducation }) {
-  const [subject, setSubject] = useState("");
-  const [institution, setInstitution] = useState("");
-  const [start, setStart] = useState("");
-  const [end, setEnd] = useState("");
+function AddEducation({ addNewEducation, showNewModal, setShowNewModal }) {
+    const dialogRef = useRef(null);
+
+    const [subject, setSubject] = useState("");
+    const [institution, setInstitution] = useState("");
+    const [start, setStart] = useState("");
+    const [end, setEnd] = useState("");
+
+    useEffect(() => {
+        const dialog = dialogRef.current;
+        if (!dialog) return;
+
+        if (showNewModal) {
+            if (!dialog.open) dialog.showModal();
+            } else if (dialog.open) {
+            dialog.close();
+        }
+    }, [showNewModal]);
 
   const resetForm = () => {
     setSubject("");
@@ -44,8 +64,15 @@ function AddEducation({ addNewEducation }) {
     setEnd("");
   };
   return (
-    <div className="addEducation">
-      <h2>Edit</h2>
+    <dialog 
+        className="addEducation" 
+        ref={dialogRef}
+        onClose={()=> setShowNewModal(false)}
+    >
+      <div className="header">
+          <h2>Edit</h2>
+          <button type="button" onClick={()=> setShowNewModal(false)}>Close</button>
+      </div>
       <form action="">
         <div className="educationCol">
           <label htmlFor="subject">Subject:</label>
@@ -92,12 +119,13 @@ function AddEducation({ addNewEducation }) {
             e.preventDefault();
             addNewEducation(subject, institution, start, end);
             resetForm();
+            setShowNewModal(false)
           }}
         >
           Save
         </button>
       </form>
-    </div>
+    </dialog>
   );
 }
 

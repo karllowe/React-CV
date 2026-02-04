@@ -1,11 +1,27 @@
-.addEducation {
+.educationHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+
+.addEducation[open] {
     display: flex;
     flex-direction: column;
+    gap: 12px;
     align-items: stretch;
     width: 100%;
     margin: 12px 12px;
+    background-color: white;
+    color: black;
 }
 
+.addEducation .header {
+    display: flex;
+    justify-content: space-between;
+
+}
 .addEducation form{
     display: flex;
     justify-content: space-between;
@@ -19,4 +35,8 @@
 
 .educationCol:nth-child(-n +2) {
     flex: 2 1 auto
+}
+
+.addEducation button {
+    width: 100px;
 }

@@ -49,8 +49,8 @@ function EducationSection() {
   return (
     <div className="formSection">
       <form action="">
-        <div className="educationHeader">
-            <h2>Education</h2>
+        <div className="sectionHeader">
+            <h2>Education:</h2>
             <button 
                 type="button"
                 onClick={() => {

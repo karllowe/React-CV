@@ -2,6 +2,11 @@
     color: black;
 }
 
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
 
 .formSection {
     display: flex;
@@ -19,6 +24,11 @@ h2 {
 }
 
 input {
+    background-color: white;
+    color: black;
+}
+
+textarea {
     background-color: white;
     color: black;
 }

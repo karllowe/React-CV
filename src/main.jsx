@@ -8,5 +8,5 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <GeneralInfo />
     <EducationSection />
-  </StrictMode>,
+  </StrictMode>
 )

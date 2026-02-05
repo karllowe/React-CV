@@ -221,7 +221,7 @@ function ShowJobs({jobsArray, setJobsModal, setFormContents}) {
                 <li key={item.id}>
                     <div className="jobListItem">
                         <div className="jobHeaderRow">
-                            <div>{item.title} - {item.company}</div>
+                            <div><strong>{item.title}</strong> - {item.company}</div>
                             <div className="jobDate">({format(item.startDate, 'MMM-yyyy')}-{item.endDate ? format(item.endDate, 'MMM-yyyy') : "current"}) </div>
                             <button
                                 type="button"
@@ -233,7 +233,7 @@ function ShowJobs({jobsArray, setJobsModal, setFormContents}) {
                                 Edit
                             </button>
                         </div>
-                        <h4>Key responsibilities:</h4>
+                        <p>Key responsibilities:</p>
                         <p>{item.responsibilities}</p>
                     </div>
                 </li>

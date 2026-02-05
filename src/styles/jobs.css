@@ -41,6 +41,11 @@
     margin-left: auto;
 }
 
+ul {
+    list-style: none;
+    padding: 0 0 0 0;
+}
+
 .jobListItem {
     display: flex;
     flex-direction: column;
@@ -60,4 +65,8 @@
 h4, p {
     margin: 0 0 0 0;
     padding: none;
+}
+
+p {
+    white-space: pre-wrap;
 }

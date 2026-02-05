@@ -23,6 +23,7 @@ function EducationSection() {
   const [educationArray, setEducationArray] = useState([]);
   const [showNewModal, setShowNewModal] = useState(false);
   const [selectedEducation, setSelectedEducation] = useState(null);
+  const [mode, setMode] = useState("new");
 
   const addNewEducation = (subject, institution, startDate, endDate) => {
     const item = new Degree(subject, institution, startDate, endDate);
@@ -61,14 +62,14 @@ function EducationSection() {
             >Add</button>
         </div>
       </form>
-      {showNewModal && (<AddEducation addNewEducation={addNewEducation} showNewModal={showNewModal} setShowNewModal={setShowNewModal} selectedEducation={selectedEducation} updateEducation={updateEducation} deleteEducation={deleteEducation}/>)}
-      <ShowEducation educationArray={educationArray} selectedEducation={selectedEducation} setFormContents={setFormContents} setShowNewModal={setShowNewModal} tempArray={tempArray} />
+      {showNewModal && (<AddEducation addNewEducation={addNewEducation} showNewModal={showNewModal} setShowNewModal={setShowNewModal} selectedEducation={selectedEducation} updateEducation={updateEducation} deleteEducation={deleteEducation} mode={mode}/>)}
+      <ShowEducation educationArray={educationArray} selectedEducation={selectedEducation} setFormContents={setFormContents} setShowNewModal={setShowNewModal} tempArray={tempArray} setMode={setMode}/>
     </div>
   );
 }
 
 // dialog modal sub-component
-function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selectedEducation, updateEducation, deleteEducation}) {
+function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selectedEducation, updateEducation, deleteEducation, mode}) {
     const dialogRef = useRef(null);
     const formRef = useRef(null);
 
@@ -78,13 +79,6 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
     const [end, setEnd] = useState(selectedEducation ? selectedEducation.endDate : "");
     const [id] = useState(selectedEducation ? selectedEducation.id : "");
     const [isValid, setIsValid] = useState(false);
-
-    let mode = "";
-    if (selectedEducation) {
-        mode = "edit"
-    } else {
-        mode = "new"
-    };
 
     useEffect(() => {
         const dialog = dialogRef.current;
@@ -203,7 +197,7 @@ function AddEducation({ addNewEducation, showNewModal, setShowNewModal, selected
 
 
 
-function ShowEducation({ tempArray, setFormContents, setShowNewModal }) {
+function ShowEducation({ tempArray, setFormContents, setShowNewModal, setMode }) {
   return (
     <>
     <p>
@@ -219,6 +213,7 @@ function ShowEducation({ tempArray, setFormContents, setShowNewModal }) {
                 <button
                     type="button"
                     onClick={() => {
+                        setMode("edit");
                         setFormContents(item);
                         setShowNewModal(true);
                     }}

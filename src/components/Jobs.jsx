@@ -19,6 +19,7 @@ function JobsSection() {
     const [jobsArray, setJobsArray] = useState([]);
     const [showJobsModal, setJobsModal] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
+    const [mode, setMode] = useState("new");
    
     const addNewJob = (title, company, startDate, endDate=null, responsibilities="") => {
         const newJob = new Job(title, company, startDate, endDate, responsibilities);
@@ -59,15 +60,14 @@ function JobsSection() {
             </div>
             {showJobsModal && (<AddJob jobsArray={jobsArray} setJobsModal={setJobsModal} 
             showJobsModal={showJobsModal} addNewJobs={addNewJob} selectedJob={selectedJob} 
-            updateJob={updateJob} deleteJob={deleteJob}/>)}
-            <ShowJobs jobsArray={tempJobsArray} setJobsModal={setJobsModal} setFormContents={setFormContents}/>
+            updateJob={updateJob} deleteJob={deleteJob} mode={mode}/>)}
+            <ShowJobs jobsArray={tempJobsArray} setJobsModal={setJobsModal} setFormContents={setFormContents} setMode={setMode}/>
         </div>
     )
 }
 
-function AddJob({showJobsModal, setJobsModal, addNewJobs, selectedJob, updateJob, deleteJob}) {
+function AddJob({showJobsModal, setJobsModal, selectedJob, deleteJob, updateJob, addNewJobs, mode}) {
     const dialogRef = useRef(null);
-    const formRef = useRef(null);
 
     const [title, setTitle] = useState(selectedJob ? selectedJob.title : "");
     const [company, setCompany] = useState(selectedJob ? selectedJob.company : "");
@@ -76,15 +76,13 @@ function AddJob({showJobsModal, setJobsModal, addNewJobs, selectedJob, updateJob
     const [responsibilities, setResponsibilities] = useState(selectedJob ? selectedJob.responsibilities : "");
     const [id] = useState(selectedJob ? selectedJob.id : "");
 
-    const [isValid, setIsValid] = useState(false);
 
-    let mode = "";
-    if (selectedJob) {
-        mode = "edit"
-    } else {
-        mode = "new"
-    };
 
+    const [titleValid, setTitleValid] = useState(title ? true : false);
+    const [companyValid, setCompanyValid] = useState(company ? true : false);
+    const [startValid, setStartValid] = useState(startDate ? true : false);
+
+    const formValid = titleValid && companyValid && startValid;
 
     useEffect(() => {
         const dialog = dialogRef.current;
@@ -97,13 +95,17 @@ function AddJob({showJobsModal, setJobsModal, addNewJobs, selectedJob, updateJob
         }
     }, [showJobsModal]);
 
-    useEffect((isValid)=> {
-        if (!formRef.current) return;
-        if(!isValid) {
-            setIsValid(formRef.current.checkValidity())
-        }
-    }, [title, company, startDate]);
-
+   const handleSubmit = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (mode=="edit") {
+            updateJob(title, company, startDate, endDate, responsibilities);
+        } else {
+            addNewJobs(title, company, startDate, endDate, responsibilities);
+        };
+        resetForm();
+        setJobsModal(false)
+}
 
     const resetForm = () => {
         setTitle("");
@@ -121,38 +123,36 @@ function AddJob({showJobsModal, setJobsModal, addNewJobs, selectedJob, updateJob
         >
             <div className="header">
                 <h2>Add new job</h2>
-                <button
-                    type="button"
-                    className="deleteButton"
-                    hidden={mode=="new"}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        deleteJob(id);
-                        resetForm();
-                        setJobsModal(false);
-                    }}
-                >
-                    Delete
-                </button>
-                <button 
-                    type="submit"
-                    className="submitButton"
-                    disabled={!isValid}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        if (mode=="edit") {
-                            updateJob(title, company, startDate, endDate, responsibilities);
-                        } else {
-                            addNewJobs(title, company, startDate, endDate, responsibilities);
-                        };
-                        resetForm();
-                        setJobsModal(false)
-                    }}>
-                    Save
-                </button>
-                <button type="button" onClick={() => setJobsModal(false)}>Close</button>
+                <div className="jobButtons">
+                    <button
+                        type="button"
+                        className="deleteButton"
+                        hidden={mode=="new"}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            deleteJob(id);
+                            resetForm();
+                            setJobsModal(false);
+                        }}
+                    >
+                        Delete
+                    </button>
+                    <button
+                        type="button"
+                        className="submitButton"
+                        disabled={!formValid}
+                        onClick={(e) => {
+                            handleSubmit(e);
+                        }}>
+                        Save
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setJobsModal(false)}>Close
+                    </button>
+                </div>
             </div>
-            <form action="" ref={formRef}>
+            <form action="">
                 <div className="jobFormRow">
                     <label htmlFor="jobtitle">Title:</label>
                     <input 
@@ -160,7 +160,14 @@ function AddJob({showJobsModal, setJobsModal, addNewJobs, selectedJob, updateJob
                         id="jobTitle" 
                         name="job_title" 
                         value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        onChange={(e) => 
+                            {
+                                setTitle(e.target.value);
+                                if (e.target.value) {
+                                    setTitleValid(true)
+                                }
+                            }
+                        }
                         required
                     />
                 </div>
@@ -172,7 +179,12 @@ function AddJob({showJobsModal, setJobsModal, addNewJobs, selectedJob, updateJob
                             id="company" 
                             name="company_name" 
                             value={company}
-                            onChange={(e) => setCompany(e.target.value)}
+                            onChange={(e) => {
+                                setCompany(e.target.value);
+                                if(e.target.value) {
+                                    setCompanyValid(true)
+                                }
+                            }}
                             required
                         />
                     </div>
@@ -183,7 +195,12 @@ function AddJob({showJobsModal, setJobsModal, addNewJobs, selectedJob, updateJob
                             id="start" 
                             name="start_date" 
                             value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
+                            onChange={(e) => {
+                                setStartDate(e.target.value);
+                                if (e.target.value) {
+                                    setStartValid(true)
+                                }
+                            }}
                             required/>
                     </div>
                     <div className="jobFormCol">
@@ -211,7 +228,7 @@ function AddJob({showJobsModal, setJobsModal, addNewJobs, selectedJob, updateJob
     )
 }
 
-function ShowJobs({jobsArray, setJobsModal, setFormContents}) {
+function ShowJobs({jobsArray, setJobsModal, setFormContents, setMode}) {
     return (
         <>
         <p>{jobsArray.length <1 ? "No jobs added" : ""}</p>
@@ -226,6 +243,7 @@ function ShowJobs({jobsArray, setJobsModal, setFormContents}) {
                             <button
                                 type="button"
                                 onClick={() => {
+                                    setMode("edit");
                                     setFormContents(item);
                                     setJobsModal(true)
                                 }}

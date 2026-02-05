@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import "/src/styles/form-section.css";
 import "/src/styles/jobs.css";
 import {format} from "date-fns";
-import {sortDates} from "/src/components/Help_functions.jsx"
+import {sortDates} from "/src/components/Help_Functions.jsx"
 
 class Job {
     constructor(title, company, startDate, endDate, responsibilities) {
